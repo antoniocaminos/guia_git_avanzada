@@ -1,0 +1,5765 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Git + Bash | Aplicaciones Web 1 y 2</title>
+
+    <style>
+
+        /* ==========================================================
+           VARIABLES
+        ========================================================== */
+
+        :root {
+
+            --bg: #f5f7fb;
+            --bg-card: #ffffff;
+            --text: #18202a;
+            --muted: #687386;
+
+            --primary: #6c5ce7;
+            --primary-dark: #5145c7;
+
+            --secondary: #00b894;
+
+            --dark: #111827;
+            --dark-2: #18212f;
+
+            --border: #e3e7ef;
+
+            --danger: #e74c3c;
+            --warning: #f39c12;
+
+            --shadow:
+                0 15px 45px rgba(24, 32, 42, 0.08);
+
+            --radius: 18px;
+
+            --transition: 0.3s ease;
+        }
+
+
+        /* ==========================================================
+           TEMA OSCURO
+        ========================================================== */
+
+        [data-theme="dark"] {
+
+            --bg: #0d1117;
+            --bg-card: #161b22;
+            --text: #f0f3f6;
+            --muted: #9da7b3;
+
+            --border: #29313d;
+
+            --dark: #070a0e;
+        }
+
+
+        /* ==========================================================
+           RESET
+        ========================================================== */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: var(--bg);
+
+            color: var(--text);
+
+            line-height: 1.7;
+
+            transition:
+                background var(--transition),
+                color var(--transition);
+        }
+
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+
+        /* ==========================================================
+           BARRA DE PROGRESO
+        ========================================================== */
+
+        #progressBar {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 0;
+
+            height: 4px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            z-index: 9999;
+        }
+
+
+        /* ==========================================================
+           HEADER
+        ========================================================== */
+
+        .header {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 1000;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 15px 6%;
+
+            background:
+                rgba(255, 255, 255, 0.92);
+
+            border-bottom: 1px solid var(--border);
+
+            backdrop-filter: blur(15px);
+        }
+
+
+        [data-theme="dark"] .header {
+
+            background:
+                rgba(13, 17, 23, 0.92);
+        }
+
+
+        .logo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        .logo-icon {
+
+            display: grid;
+
+            place-items: center;
+
+            width: 42px;
+
+            height: 42px;
+
+            border-radius: 12px;
+
+            background: var(--primary);
+
+            color: white;
+
+            font-size: 22px;
+        }
+
+
+        .logo strong {
+
+            display: block;
+
+            font-size: 16px;
+        }
+
+
+        .logo small {
+
+            color: var(--muted);
+
+            font-size: 12px;
+        }
+
+
+        #navLinks {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+        }
+
+
+        #navLinks a {
+
+            color: var(--muted);
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: var(--transition);
+        }
+
+
+        #navLinks a:hover {
+
+            color: var(--primary);
+
+            transform: translateY(-2px);
+        }
+
+
+        .menu-btn {
+
+            display: none;
+
+            border: 0;
+
+            background: transparent;
+
+            font-size: 26px;
+
+            color: var(--text);
+        }
+
+
+        .theme-btn {
+
+            border: 1px solid var(--border);
+
+            background: var(--bg-card);
+
+            color: var(--text);
+
+            padding: 8px 13px;
+
+            border-radius: 10px;
+
+            transition: var(--transition);
+        }
+
+
+        .theme-btn:hover {
+
+            border-color: var(--primary);
+
+            color: var(--primary);
+
+            transform: translateY(-2px);
+        }
+
+
+        /* ==========================================================
+           HERO
+        ========================================================== */
+
+        .hero {
+
+            min-height: 720px;
+
+            display: grid;
+
+            grid-template-columns:
+                1.1fr 0.9fr;
+
+            align-items: center;
+
+            gap: 60px;
+
+            padding: 100px 7%;
+
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(108, 92, 231, 0.20),
+                    transparent 40%
+                );
+        }
+
+
+        .hero-content {
+
+            max-width: 720px;
+
+            animation: heroIn 0.8s ease;
+        }
+
+
+        @keyframes heroIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        .badge {
+
+            display: inline-block;
+
+            padding: 7px 13px;
+
+            border-radius: 999px;
+
+            background:
+                rgba(108, 92, 231, 0.12);
+
+            color: var(--primary);
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .hero h1 {
+
+            font-size:
+                clamp(42px, 7vw, 82px);
+
+            line-height: 0.95;
+
+            letter-spacing: -4px;
+
+            margin-bottom: 28px;
+        }
+
+
+        .hero h1 span {
+
+            display: block;
+
+            color: var(--primary);
+        }
+
+
+        .hero p {
+
+            max-width: 620px;
+
+            color: var(--muted);
+
+            font-size: 19px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .hero-buttons {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+        }
+
+
+        .btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 13px 20px;
+
+            border-radius: 12px;
+
+            font-weight: 800;
+
+            transition: var(--transition);
+        }
+
+
+        .btn:hover {
+
+            transform: translateY(-4px);
+
+            box-shadow: var(--shadow);
+        }
+
+
+        .btn.primary {
+
+            background: var(--primary);
+
+            color: white;
+        }
+
+
+        .btn.primary:hover {
+
+            background: var(--primary-dark);
+        }
+
+
+        .btn.secondary {
+
+            border: 1px solid var(--border);
+
+            color: var(--text);
+
+            background: var(--bg-card);
+        }
+
+
+        /* ==========================================================
+           TERMINAL
+        ========================================================== */
+
+        .terminal {
+
+            overflow: hidden;
+
+            border-radius: 16px;
+
+            background: #0d1117;
+
+            color: #e6edf3;
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.25);
+
+            animation:
+                floatTerminal 4s ease-in-out infinite;
+        }
+
+
+        @keyframes floatTerminal {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+
+        .terminal-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 12px 16px;
+
+            background: #161b22;
+
+            color: #8b949e;
+
+            font-size: 12px;
+        }
+
+
+        .terminal-buttons {
+
+            display: flex;
+
+            gap: 6px;
+        }
+
+
+        .terminal-buttons span {
+
+            width: 10px;
+
+            height: 10px;
+
+            border-radius: 50%;
+
+            background: #30363d;
+        }
+
+
+        .terminal-body {
+
+            padding: 25px;
+
+            min-height: 300px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+        }
+
+
+        .terminal-body p {
+            margin-bottom: 10px;
+        }
+
+
+        .prompt {
+            color: #58a6ff;
+        }
+
+
+        .path {
+            color: #3fb950;
+        }
+
+
+        .success {
+            color: #3fb950;
+        }
+
+
+        .cursor {
+            animation: blink 1s infinite;
+        }
+
+
+        @keyframes blink {
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+
+        /* ==========================================================
+           SECCIONES
+        ========================================================== */
+
+        .section {
+
+            max-width: 1250px;
+
+            margin: auto;
+
+            padding: 110px 6%;
+        }
+
+
+        .gray-section {
+
+            max-width: none;
+
+            background:
+                rgba(108, 92, 231, 0.035);
+        }
+
+
+        .dark-section {
+
+            max-width: none;
+
+            background: var(--dark);
+
+            color: white;
+        }
+
+
+        .section-title {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 22px;
+
+            margin-bottom: 45px;
+        }
+
+
+        .section-title > span {
+
+            font-size: 16px;
+
+            font-weight: 900;
+
+            color: var(--primary);
+
+            padding-top: 7px;
+        }
+
+
+        .eyebrow {
+
+            color: var(--primary);
+
+            font-size: 11px;
+
+            font-weight: 900;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .section h2 {
+
+            font-size:
+                clamp(30px, 5vw, 50px);
+
+            line-height: 1;
+
+            letter-spacing: -2px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .section-intro {
+
+            max-width: 750px;
+
+            color: var(--muted);
+
+            font-size: 17px;
+
+            margin-bottom: 35px;
+        }
+
+
+        /* ==========================================================
+           CARDS
+        ========================================================== */
+
+        .info-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 22px;
+        }
+
+
+        .info-card {
+
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius);
+
+            padding: 30px;
+
+            box-shadow: var(--shadow);
+
+            transition: var(--transition);
+        }
+
+
+        .info-card:hover {
+
+            transform:
+                translateY(-8px);
+
+            border-color: var(--primary);
+
+            box-shadow:
+                0 25px 60px rgba(108, 92, 231, 0.15);
+        }
+
+
+        .card-icon {
+
+            font-size: 32px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .info-card h3 {
+
+            margin-bottom: 10px;
+        }
+
+
+        .info-card p {
+
+            color: var(--muted);
+        }
+
+
+        /* ==========================================================
+           CALLOUT
+        ========================================================== */
+
+        .callout {
+
+            margin-top: 30px;
+
+            padding: 25px 30px;
+
+            border-left: 5px solid var(--primary);
+
+            background:
+                rgba(108, 92, 231, 0.08);
+
+            border-radius: 0 12px 12px 0;
+        }
+
+
+        .callout p {
+
+            margin-top: 5px;
+
+            color: var(--muted);
+        }
+
+
+        .callout.warning {
+
+            border-color: var(--warning);
+
+            background:
+                rgba(243, 156, 18, 0.08);
+        }
+
+
+        .callout.danger {
+
+            border-color: var(--danger);
+
+            background:
+                rgba(231, 76, 60, 0.08);
+        }
+
+
+        /* ==========================================================
+           COMMAND GRID
+        ========================================================== */
+
+        .command-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 20px;
+        }
+
+
+        .command-card {
+
+            padding: 24px;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            background:
+                rgba(255, 255, 255, 0.04);
+
+            border-radius: 15px;
+
+            transition: var(--transition);
+        }
+
+
+        .command-card.light {
+
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+        }
+
+
+        .command-card:hover {
+
+            transform: translateY(-6px);
+
+            border-color: var(--primary);
+
+            box-shadow: var(--shadow);
+        }
+
+
+        .command-card code {
+
+            display: inline-block;
+
+            padding: 7px 10px;
+
+            border-radius: 8px;
+
+            background: rgba(108, 92, 231, 0.12);
+
+            color: var(--primary);
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-weight: 700;
+
+            margin-bottom: 18px;
+        }
+
+
+        .dark-section .command-card code {
+
+            color: #a9a1ff;
+        }
+
+
+        .command-card h3 {
+
+            margin-bottom: 8px;
+        }
+
+
+        .command-card p {
+
+            color: var(--muted);
+
+            font-size: 14px;
+        }
+
+
+        .command-top {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .command-number {
+
+            color: #8b949e;
+
+            font-size: 12px;
+
+            font-weight: 800;
+        }
+
+
+        /* ==========================================================
+           COPY BUTTON
+        ========================================================== */
+
+        .copy-btn {
+
+            border: 1px solid var(--border);
+
+            background: var(--bg-card);
+
+            color: var(--muted);
+
+            padding: 6px 10px;
+
+            border-radius: 7px;
+
+            font-size: 11px;
+
+            transition: var(--transition);
+        }
+
+
+        .copy-btn:hover {
+
+            color: var(--primary);
+
+            border-color: var(--primary);
+
+            transform: translateY(-2px);
+        }
+
+
+        /* ==========================================================
+           STEPS
+        ========================================================== */
+
+        .steps {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 25px;
+        }
+
+
+        .step {
+
+            display: flex;
+
+            gap: 25px;
+
+            padding: 28px;
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius);
+
+            background: var(--bg-card);
+
+            box-shadow: var(--shadow);
+
+            transition: var(--transition);
+        }
+
+
+        .step:hover {
+
+            transform: translateX(6px);
+
+            border-color: var(--primary);
+        }
+
+
+        .step-number {
+
+            flex: 0 0 50px;
+
+            width: 50px;
+
+            height: 50px;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 50%;
+
+            background: var(--primary);
+
+            color: white;
+
+            font-weight: 900;
+
+            font-size: 18px;
+        }
+
+
+        .step-content {
+            flex: 1;
+        }
+
+
+        .step-content h3 {
+            margin-bottom: 15px;
+        }
+
+
+        .step-content p {
+            color: var(--muted);
+            margin-top: 12px;
+        }
+
+
+        /* ==========================================================
+           CODE BOX
+        ========================================================== */
+
+        .code-box {
+
+            position: relative;
+
+            margin: 18px 0;
+
+            overflow: hidden;
+
+            border-radius: 12px;
+
+            background: #0d1117;
+
+            border: 1px solid #222b36;
+        }
+
+
+        .code-box pre {
+
+            overflow-x: auto;
+
+            padding: 22px;
+
+            color: #e6edf3;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+        }
+
+
+        .code-box .copy-btn {
+
+            position: absolute;
+
+            top: 10px;
+
+            right: 10px;
+
+            z-index: 2;
+
+            background: #161b22;
+
+            color: #c9d1d9;
+
+            border-color: #30363d;
+        }
+
+
+        /* ==========================================================
+           FLOW
+        ========================================================== */
+
+        .flow {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+
+            margin-bottom: 45px;
+        }
+
+
+        .flow-item {
+
+            padding: 14px 20px;
+
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-weight: 800;
+
+            transition: var(--transition);
+        }
+
+
+        .flow-item:hover {
+
+            transform: scale(1.05);
+
+            border-color: var(--primary);
+        }
+
+
+        .arrow {
+
+            color: var(--primary);
+
+            font-size: 25px;
+
+            font-weight: 900;
+        }
+
+
+        /* ==========================================================
+           COMMAND SECTION
+        ========================================================== */
+
+        .command-section {
+
+            margin: 30px 0;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+        }
+
+
+        .command-section h3 {
+            margin-bottom: 15px;
+        }
+
+
+        .command-section p {
+            color: var(--muted);
+        }
+
+
+        /* ==========================================================
+           IMPORTANT COMMAND
+        ========================================================== */
+
+        .important-command {
+
+            padding: 35px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(108, 92, 231, 0.14),
+                    rgba(0, 184, 148, 0.08)
+                );
+
+            border: 1px solid var(--border);
+
+            margin-bottom: 30px;
+        }
+
+
+        .command-line {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+        }
+
+
+        .command-line code {
+
+            padding: 13px 16px;
+
+            border-radius: 9px;
+
+            background: #0d1117;
+
+            color: #e6edf3;
+
+            font-family:
+                "Courier New",
+                monospace;
+        }
+
+
+        .command-line span {
+
+            color: var(--primary);
+
+            font-size: 24px;
+
+            font-weight: 900;
+        }
+
+
+        .important-command p {
+
+            color: var(--muted);
+
+            text-align: center;
+
+            margin-top: 20px;
+        }
+
+
+        /* ==========================================================
+           EXPLAIN CARD
+        ========================================================== */
+
+        .explain-card {
+
+            padding: 30px;
+
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+
+            border-radius: 15px;
+
+            box-shadow: var(--shadow);
+        }
+
+
+        .explain-card pre {
+
+            margin: 15px 0;
+
+            padding: 18px;
+
+            border-radius: 10px;
+
+            background: #0d1117;
+
+            color: #e6edf3;
+
+            overflow-x: auto;
+        }
+
+
+        .explain-card ul {
+
+            list-style: none;
+        }
+
+
+        .explain-card li {
+
+            padding: 8px 0;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+
+        .explain-card li:last-child {
+
+            border-bottom: 0;
+        }
+
+
+        /* ==========================================================
+           TIP
+        ========================================================== */
+
+        .tip {
+
+            margin-top: 25px;
+
+            padding: 25px;
+
+            background:
+                rgba(0, 184, 148, 0.08);
+
+            border-left: 5px solid var(--secondary);
+
+            border-radius: 0 12px 12px 0;
+        }
+
+
+        .tip p {
+
+            color: var(--muted);
+
+            margin: 8px 0 15px;
+        }
+
+
+        .examples {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+        }
+
+
+        .examples code {
+
+            padding: 10px 12px;
+
+            border-radius: 8px;
+
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+
+            font-family:
+                "Courier New",
+                monospace;
+        }
+
+
+        /* ==========================================================
+           BRANCH DIAGRAM
+        ========================================================== */
+
+        .branch-diagram {
+
+            position: relative;
+
+            height: 170px;
+
+            margin: 35px 0;
+        }
+
+
+        .branch {
+
+            position: absolute;
+
+            padding: 12px 20px;
+
+            border-radius: 999px;
+
+            color: white;
+
+            font-weight: 800;
+
+            box-shadow: var(--shadow);
+        }
+
+
+        .branch.main {
+
+            left: 15%;
+
+            top: 25px;
+
+            background: var(--primary);
+        }
+
+
+        .branch.feature {
+
+            left: 55%;
+
+            top: 110px;
+
+            background: var(--secondary);
+        }
+
+
+        .branch-line {
+
+            position: absolute;
+
+            width: 45%;
+
+            height: 3px;
+
+            left: 25%;
+
+            top: 85px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            transform: rotate(20deg);
+        }
+
+
+        /* ==========================================================
+           REMOTE FLOW
+        ========================================================== */
+
+        .remote-flow {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 50px;
+
+            margin: 40px 0 60px;
+        }
+
+
+        .remote-flow > div:not(.remote-arrow) {
+
+            min-width: 200px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            border: 1px solid var(--border);
+
+            border-radius: 18px;
+
+            background: var(--bg-card);
+
+            box-shadow: var(--shadow);
+        }
+
+
+        .remote-flow strong {
+
+            display: block;
+
+            margin-top: 8px;
+        }
+
+
+        .remote-flow small {
+
+            color: var(--muted);
+
+            display: block;
+
+            margin-top: 5px;
+        }
+
+
+        .remote-arrow {
+
+            color: var(--primary);
+
+            font-size: 35px;
+
+            font-weight: 900;
+        }
+
+
+        /* ==========================================================
+           COMMAND LIST
+        ========================================================== */
+
+        .command-list {
+
+            max-width: 850px;
+
+            margin: 20px 0;
+
+            padding-left: 25px;
+
+            color: var(--muted);
+        }
+
+
+        .command-list li {
+
+            margin-bottom: 10px;
+        }
+
+
+        /* ==========================================================
+           GITIGNORE
+        ========================================================== */
+
+        .gitignore-example {
+
+            margin-top: 25px;
+
+            padding: 25px;
+
+            border-radius: 14px;
+
+            background: #0d1117;
+
+            border: 1px solid #222b36;
+
+            overflow-x: auto;
+        }
+
+
+        .gitignore-example pre {
+
+            color: #e6edf3;
+
+            font-family:
+                "Courier New",
+                monospace;
+        }
+
+
+        /* ==========================================================
+           TABLA
+        ========================================================== */
+
+        .decision-table {
+
+            overflow: hidden;
+
+            border: 1px solid var(--border);
+
+            border-radius: 15px;
+
+            background: var(--bg-card);
+        }
+
+
+        .decision-row {
+
+            display: grid;
+
+            grid-template-columns:
+                0.9fr 1.5fr;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+
+        .decision-row:last-child {
+
+            border-bottom: 0;
+        }
+
+
+        .decision-row > div {
+
+            padding: 18px 20px;
+
+            border-right: 1px solid var(--border);
+        }
+
+
+        .decision-row > div:last-child {
+
+            border-right: 0;
+        }
+
+
+        .header-row {
+
+            background:
+                rgba(108, 92, 231, 0.08);
+
+            font-weight: 900;
+        }
+
+
+        .decision-row code {
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            color: var(--primary);
+        }
+
+
+        /* ==========================================================
+           FAQ
+        ========================================================== */
+
+        .faq {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+        }
+
+
+        details {
+
+            padding: 20px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            background: var(--bg-card);
+
+            transition: var(--transition);
+        }
+
+
+        details:hover {
+
+            border-color: var(--primary);
+        }
+
+
+        summary {
+
+            cursor: pointer;
+
+            font-weight: 800;
+        }
+
+
+        details p {
+
+            color: var(--muted);
+
+            margin-top: 15px;
+        }
+
+
+        details pre {
+
+            margin-top: 15px;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            background: #0d1117;
+
+            color: #e6edf3;
+
+            overflow-x: auto;
+        }
+
+
+        /* ==========================================================
+           EJERCICIOS
+        ========================================================== */
+
+        .exercise-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 25px;
+        }
+
+
+        .exercise {
+
+            padding: 30px;
+
+            background: var(--bg-card);
+
+            border: 1px solid var(--border);
+
+            border-radius: 18px;
+
+            box-shadow: var(--shadow);
+
+            transition: var(--transition);
+        }
+
+
+        .exercise:hover {
+
+            transform: translateY(-7px);
+
+            border-color: var(--primary);
+        }
+
+
+        .exercise > span {
+
+            color: var(--primary);
+
+            font-size: 11px;
+
+            font-weight: 900;
+
+            letter-spacing: 1.5px;
+        }
+
+
+        .exercise h3 {
+
+            margin: 10px 0;
+        }
+
+
+        .exercise p {
+
+            color: var(--muted);
+
+            margin-bottom: 18px;
+        }
+
+
+        .exercise ol,
+        .exercise ul {
+
+            padding-left: 22px;
+
+            color: var(--muted);
+        }
+
+
+        .exercise li {
+
+            margin-bottom: 5px;
+        }
+
+
+        .exercise pre {
+
+            margin-top: 15px;
+
+            padding: 18px;
+
+            background: #0d1117;
+
+            color: #e6edf3;
+
+            border-radius: 10px;
+
+            overflow-x: auto;
+        }
+
+
+        /* ==========================================================
+           CHEAT SHEET
+        ========================================================== */
+
+        .cheat-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+
+        .cheat-grid > div {
+
+            padding: 25px;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 15px;
+
+            background:
+                rgba(255, 255, 255, 0.04);
+        }
+
+
+        .cheat-grid span {
+
+            display: block;
+
+            margin-bottom: 15px;
+
+            color: #a9a1ff;
+
+            font-weight: 900;
+
+            text-transform: uppercase;
+
+            font-size: 11px;
+
+            letter-spacing: 1px;
+        }
+
+
+        .cheat-grid code {
+
+            display: block;
+
+            padding: 7px 0;
+
+            color: #d0d7de;
+
+            font-size: 13px;
+
+            font-family:
+                "Courier New",
+                monospace;
+        }
+
+
+        /* ==========================================================
+           FINAL
+        ========================================================== */
+
+        .final-section {
+
+            padding: 110px 6%;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    #8b7cf6
+                );
+
+            color: white;
+        }
+
+
+        .final-content {
+
+            max-width: 1100px;
+
+            margin: auto;
+        }
+
+
+        .final-section .badge {
+
+            background:
+                rgba(255, 255, 255, 0.15);
+
+            color: white;
+        }
+
+
+        .final-section h2 {
+
+            font-size:
+                clamp(30px, 5vw, 55px);
+
+            margin-bottom: 35px;
+
+            letter-spacing: -2px;
+        }
+
+
+        .final-flow {
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 12px;
+        }
+
+
+        .final-flow span {
+
+            padding: 11px 15px;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255, 255, 255, 0.14);
+
+            border: 1px solid rgba(255, 255, 255, 0.2);
+
+            font-weight: 800;
+        }
+
+
+        /* ==========================================================
+           TOAST
+        ========================================================== */
+
+        .toast {
+
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 25px;
+
+            padding: 13px 18px;
+
+            border-radius: 10px;
+
+            background: #111827;
+
+            color: white;
+
+            opacity: 0;
+
+            transform: translateY(20px);
+
+            pointer-events: none;
+
+            transition:
+                0.3s ease;
+
+            z-index: 9999;
+        }
+
+
+        .toast.show {
+
+            opacity: 1;
+
+            transform: translateY(0);
+        }
+
+
+        /* ==========================================================
+           BOTÓN TOP
+        ========================================================== */
+
+        .top-btn {
+
+            position: fixed;
+
+            right: 25px;
+
+            bottom: 85px;
+
+            width: 45px;
+
+            height: 45px;
+
+            border: 0;
+
+            border-radius: 50%;
+
+            background: var(--primary);
+
+            color: white;
+
+            font-size: 20px;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transform: translateY(15px);
+
+            transition: var(--transition);
+
+            z-index: 1000;
+        }
+
+
+        .top-btn.visible {
+
+            opacity: 1;
+
+            pointer-events: auto;
+
+            transform: translateY(0);
+        }
+
+
+        .top-btn:hover {
+
+            transform:
+                translateY(-5px);
+        }
+
+
+        /* ==========================================================
+           FOOTER
+        ========================================================== */
+
+        .footer {
+
+            padding: 40px 6%;
+
+            text-align: center;
+
+            background: #090c11;
+
+            color: #7d8590;
+
+            font-size: 13px;
+        }
+
+
+        .footer p + p {
+
+            margin-top: 5px;
+        }
+
+
+        /* ==========================================================
+           ANIMACIÓN SCROLL
+        ========================================================== */
+
+        .reveal {
+
+            opacity: 0;
+
+            transform: translateY(35px);
+
+            transition:
+                opacity 0.7s ease,
+                transform 0.7s ease;
+        }
+
+
+        .reveal.active {
+
+            opacity: 1;
+
+            transform: translateY(0);
+        }
+
+
+        /* ==========================================================
+           RESPONSIVE
+        ========================================================== */
+
+        @media (max-width: 1000px) {
+
+            .hero {
+
+                grid-template-columns: 1fr;
+
+                padding-top: 70px;
+            }
+
+
+            .command-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .info-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .cheat-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        /* ==========================================================
+           MOBILE
+        ========================================================== */
+
+        @media (max-width: 750px) {
+
+            .header {
+
+                padding: 13px 5%;
+            }
+
+
+            .menu-btn {
+
+                display: block;
+            }
+
+
+            #navLinks {
+
+                position: absolute;
+
+                top: 70px;
+
+                left: 0;
+
+                right: 0;
+
+                display: none;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                padding: 20px;
+
+                background: var(--bg-card);
+
+                border-bottom: 1px solid var(--border);
+
+                box-shadow: var(--shadow);
+            }
+
+
+            #navLinks.open {
+
+                display: flex;
+            }
+
+
+            #navLinks a {
+
+                padding: 8px 0;
+            }
+
+
+            .theme-btn {
+
+                width: 100%;
+            }
+
+
+            .hero {
+
+                min-height: auto;
+
+                padding:
+                    70px 6%;
+            }
+
+
+            .hero h1 {
+
+                font-size: 48px;
+
+                letter-spacing: -3px;
+            }
+
+
+            .hero p {
+
+                font-size: 16px;
+            }
+
+
+            .terminal {
+
+                animation: none;
+            }
+
+
+            .section {
+
+                padding:
+                    75px 6%;
+            }
+
+
+            .section-title {
+
+                gap: 12px;
+            }
+
+
+            .section h2 {
+
+                font-size: 34px;
+            }
+
+
+            .info-grid,
+            .command-grid,
+            .exercise-grid,
+            .cheat-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .step {
+
+                flex-direction: column;
+            }
+
+
+            .step-number {
+
+                flex-basis: auto;
+            }
+
+
+            .command-line {
+
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .command-line span {
+
+                text-align: center;
+            }
+
+
+            .remote-flow {
+
+                flex-direction: column;
+
+                gap: 20px;
+            }
+
+
+            .remote-arrow {
+
+                transform: rotate(90deg);
+            }
+
+
+            .decision-row {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .decision-row > div {
+
+                border-right: 0;
+
+                border-bottom: 1px solid var(--border);
+            }
+
+
+            .decision-row > div:last-child {
+
+                border-bottom: 0;
+            }
+
+
+            .branch-diagram {
+
+                height: 220px;
+            }
+
+
+            .branch.main {
+
+                left: 5%;
+            }
+
+
+            .branch.feature {
+
+                left: 35%;
+
+                top: 140px;
+            }
+
+
+            .branch-line {
+
+                width: 50%;
+
+                left: 20%;
+
+                top: 105px;
+
+                transform: rotate(28deg);
+            }
+
+
+            .final-flow {
+
+                flex-direction: column;
+            }
+
+
+            .final-flow span {
+
+                width: 100%;
+
+                max-width: 280px;
+            }
+
+
+            .final-flow span:nth-child(even) {
+
+                display: none;
+            }
+
+        }
+
+
+        /* ==========================================================
+           REDUCIR ANIMACIONES
+        ========================================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+
+                animation-duration: 0.01ms !important;
+
+                animation-iteration-count: 1 !important;
+
+                transition-duration: 0.01ms !important;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- ==========================================================
+         BARRA DE PROGRESO
+    ========================================================== -->
+
+    <div id="progressBar"></div>
+
+
+
+    <!-- ==========================================================
+         HEADER
+    ========================================================== -->
+
+    <header class="header">
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                ⌘
+            </span>
+
+            <div>
+
+                <strong>
+                    Git + Bash
+                </strong>
+
+                <small>
+                    Aplicaciones Web 1 y 2
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <button id="menuBtn" class="menu-btn">
+            ☰
+        </button>
+
+
+        <nav id="navLinks">
+
+            <a href="#inicio">
+                Inicio
+            </a>
+
+            <a href="#bash">
+                Bash
+            </a>
+
+            <a href="#configuracion">
+                Configuración
+            </a>
+
+            <a href="#basico">
+                Git básico
+            </a>
+
+            <a href="#ramas">
+                Ramas
+            </a>
+
+            <a href="#github">
+                GitHub
+            </a>
+
+            <a href="#errores">
+                Errores
+            </a>
+
+            <a href="#ejercicios">
+                Ejercicios
+            </a>
+
+
+            <button id="themeBtn" class="theme-btn">
+                ◐ Cambiar tema
+            </button>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- ==========================================================
+         MAIN
+    ========================================================== -->
+
+    <main>
+
+
+        <!-- ======================================================
+             HERO
+        ======================================================= -->
+
+        <section id="inicio" class="hero">
+
+            <div class="hero-content">
+
+                <span class="badge">
+                    APLICACIONES WEB 1 + 2
+                </span>
+
+
+                <h1>
+
+                    Git + Bash
+
+                    <span>
+                        desde cero
+                    </span>
+
+                </h1>
+
+
+                <p>
+
+                    Guía práctica para aprender control de versiones,
+                    Git, GitHub y comandos Bash paso a paso.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a href="#configuracion"
+                       class="btn primary">
+
+                        🚀 Comenzar
+
+                    </a>
+
+
+                    <a href="#cheatsheet"
+                       class="btn secondary">
+
+                        📋 Ver comandos
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TERMINAL -->
+
+            <div class="terminal">
+
+                <div class="terminal-header">
+
+                    <div class="terminal-buttons">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                    <span>
+                        bash
+                    </span>
+
+                </div>
+
+
+                <div class="terminal-body">
+
+                    <p>
+
+                        <span class="prompt">
+                            alumno@pc
+                        </span>
+
+                        <span class="path">
+                            ~/proyecto
+                        </span>
+
+                        $
+
+                        git status
+
+                    </p>
+
+
+                    <p class="success">
+
+                        On branch main
+
+                    </p>
+
+
+                    <p>
+
+                        nothing to commit,
+                        working tree clean
+
+                    </p>
+
+
+                    <p>
+
+                        <span class="prompt">
+                            alumno@pc
+                        </span>
+
+                        <span class="path">
+                            ~/proyecto
+                        </span>
+
+                        $
+
+                        <span class="cursor">
+                            █
+                        </span>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             ¿QUÉ ES GIT?
+        ======================================================= -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <span>
+                    01
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        CONCEPTO FUNDAMENTAL
+                    </p>
+
+                    <h2>
+                        ¿Qué es Git?
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-grid">
+
+
+                <article class="info-card">
+
+                    <div class="card-icon">
+                        📦
+                    </div>
+
+                    <h3>
+                        Control de versiones
+                    </h3>
+
+                    <p>
+                        Git permite registrar los cambios realizados
+                        en un proyecto a lo largo del tiempo.
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="card-icon">
+                        🕐
+                    </div>
+
+                    <h3>
+                        Historial
+                    </h3>
+
+                    <p>
+                        Cada commit representa un punto de control
+                        al que podemos volver o consultar.
+                    </p>
+
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="card-icon">
+                        👥
+                    </div>
+
+                    <h3>
+                        Trabajo en equipo
+                    </h3>
+
+                    <p>
+                        Permite que varias personas trabajen sobre
+                        el mismo proyecto y compartan cambios.
+                    </p>
+
+                </article>
+
+            </div>
+
+
+            <div class="callout">
+
+                <strong>
+                    💡 Idea clave
+                </strong>
+
+                <p>
+
+                    Git no es GitHub. Git es el sistema de control
+                    de versiones. GitHub es una plataforma donde
+                    podemos alojar repositorios Git.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             BASH
+        ======================================================= -->
+
+        <section id="bash"
+                 class="section dark-section">
+
+            <div class="section-title">
+
+                <span>
+                    02
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        TERMINAL
+                    </p>
+
+                    <h2>
+                        Comandos Bash básicos
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <p class="section-intro">
+
+                Antes de trabajar con Git es importante conocer
+                algunos comandos básicos de la terminal.
+
+            </p>
+
+
+            <div class="command-grid">
+
+
+                <!-- PWD -->
+
+                <article class="command-card">
+
+                    <div class="command-top">
+
+                        <span class="command-number">
+                            01
+                        </span>
+
+                        <button
+                            class="copy-btn"
+                            data-copy="pwd">
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+
+                    <code>
+                        pwd
+                    </code>
+
+
+                    <h3>
+                        Mostrar ubicación
+                    </h3>
+
+
+                    <p>
+
+                        Muestra la carpeta actual
+                        donde estamos trabajando.
+
+                    </p>
+
+                </article>
+
+
+
+                <!-- LS -->
+
+                <article class="command-card">
+
+                    <div class="command-top">
+
+                        <span class="command-number">
+                            02
+                        </span>
+
+                        <button
+                            class="copy-btn"
+                            data-copy="ls">
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+
+                    <code>
+                        ls
+                    </code>
+
+
+                    <h3>
+                        Listar archivos
+                    </h3>
+
+
+                    <p>
+
+                        Muestra los archivos y carpetas
+                        del directorio actual.
+
+                    </p>
+
+                </article>
+
+
+
+                <!-- CD -->
+
+                <article class="command-card">
+
+                    <div class="command-top">
+
+                        <span class="command-number">
+                            03
+                        </span>
+
+                        <button
+                            class="copy-btn"
+                            data-copy="cd nombre-carpeta">
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+
+                    <code>
+                        cd nombre-carpeta
+                    </code>
+
+
+                    <h3>
+                        Cambiar carpeta
+                    </h3>
+
+
+                    <p>
+
+                        Permite entrar en otra carpeta.
+
+                    </p>
+
+                </article>
+
+
+
+                <!-- CD .. -->
+
+                <article class="command-card">
+
+                    <div class="command-top">
+
+                        <span class="command-number">
+                            04
+                        </span>
+
+                        <button
+                            class="copy-btn"
+                            data-copy="cd ..">
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+
+                    <code>
+                        cd ..
+                    </code>
+
+
+                    <h3>
+                        Subir un nivel
+                    </h3>
+
+
+                    <p>
+
+                        Regresa a la carpeta padre.
+
+                    </p>
+
+                </article>
+
+
+
+                <!-- MKDIR -->
+
+                <article class="command-card">
+
+                    <div class="command-top">
+
+                        <span class="command-number">
+                            05
+                        </span>
+
+                        <button
+                            class="copy-btn"
+                            data-copy="mkdir proyecto">
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+
+                    <code>
+                        mkdir proyecto
+                    </code>
+
+
+                    <h3>
+                        Crear carpeta
+                    </h3>
+
+
+                    <p>
+
+                        Crea una nueva carpeta.
+
+                    </p>
+
+                </article>
+
+
+
+                <!-- TOUCH -->
+
+                <article class="command-card">
+
+                    <div class="command-top">
+
+                        <span class="command-number">
+                            06
+                        </span>
+
+                        <button
+                            class="copy-btn"
+                            data-copy="touch index.html">
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+
+                    <code>
+                        touch index.html
+                    </code>
+
+
+                    <h3>
+                        Crear archivo
+                    </h3>
+
+
+                    <p>
+
+                        Crea un archivo vacío.
+
+                    </p>
+
+                </article>
+
+
+
+                <!-- CLEAR -->
+
+                <article class="command-card">
+
+                    <div class="command-top">
+
+                        <span class="command-number">
+                            07
+                        </span>
+
+                        <button
+                            class="copy-btn"
+                            data-copy="clear">
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+
+                    <code>
+                        clear
+                    </code>
+
+
+                    <h3>
+                        Limpiar terminal
+                    </h3>
+
+
+                    <p>
+
+                        Limpia visualmente la terminal.
+
+                    </p>
+
+                </article>
+
+
+
+                <!-- CAT -->
+
+                <article class="command-card">
+
+                    <div class="command-top">
+
+                        <span class="command-number">
+                            08
+                        </span>
+
+                        <button
+                            class="copy-btn"
+                            data-copy="cat index.html">
+
+                            Copiar
+
+                        </button>
+
+                    </div>
+
+
+                    <code>
+                        cat index.html
+                    </code>
+
+
+                    <h3>
+                        Mostrar contenido
+                    </h3>
+
+
+                    <p>
+
+                        Muestra el contenido de un archivo.
+
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             CONFIGURACIÓN
+        ======================================================= -->
+
+        <section id="configuracion"
+                 class="section">
+
+            <div class="section-title">
+
+                <span>
+                    03
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        PRIMEROS PASOS
+                    </p>
+
+                    <h2>
+                        Configuración inicial de Git
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="steps">
+
+
+                <!-- PASO 1 -->
+
+                <article class="step">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+
+                    <div class="step-content">
+
+                        <h3>
+                            Verificar instalación
+                        </h3>
+
+
+                        <div class="code-box">
+
+                            <button
+                                class="copy-btn"
+                                data-copy="git --version">
+
+                                Copiar
+
+                            </button>
+
+
+                            <pre><code>git --version</code></pre>
+
+                        </div>
+
+
+                        <p>
+
+                            Permite comprobar que Git está instalado
+                            y conocer la versión disponible.
+
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- PASO 2 -->
+
+                <article class="step">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+
+                    <div class="step-content">
+
+                        <h3>
+                            Configurar nombre
+                        </h3>
+
+
+                        <div class="code-box">
+
+                            <button
+                                class="copy-btn"
+                                data-copy='git config --global user.name "Tu Nombre"'>
+
+                                Copiar
+
+                            </button>
+
+
+                            <pre><code>git config --global user.name "Tu Nombre"</code></pre>
+
+                        </div>
+
+
+                        <p>
+
+                            Guarda el nombre que Git asociará
+                            a tus commits.
+
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- PASO 3 -->
+
+                <article class="step">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+
+                    <div class="step-content">
+
+                        <h3>
+                            Configurar correo
+                        </h3>
+
+
+                        <div class="code-box">
+
+                            <button
+                                class="copy-btn"
+                                data-copy='git config --global user.email "correo@example.com"'>
+
+                                Copiar
+
+                            </button>
+
+
+                            <pre><code>git config --global user.email "correo@example.com"</code></pre>
+
+                        </div>
+
+
+                        <p>
+
+                            Configura la dirección de correo
+                            asociada a tus commits.
+
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- PASO 4 -->
+
+                <article class="step">
+
+                    <div class="step-number">
+                        4
+                    </div>
+
+
+                    <div class="step-content">
+
+                        <h3>
+                            Ver configuración
+                        </h3>
+
+
+                        <div class="code-box">
+
+                            <button
+                                class="copy-btn"
+                                data-copy="git config --global --list">
+
+                                Copiar
+
+                            </button>
+
+
+                            <pre><code>git config --global --list</code></pre>
+
+                        </div>
+
+
+                        <p>
+
+                            Muestra las configuraciones globales
+                            de Git.
+
+                        </p>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             REPOSITORIO
+        ======================================================= -->
+
+        <section id="basico"
+                 class="section gray-section">
+
+            <div class="section-title">
+
+                <span>
+                    04
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        GIT BÁSICO
+                    </p>
+
+                    <h2>
+                        Crear nuestro primer repositorio
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="flow">
+
+                <div class="flow-item">
+                    📁 Proyecto
+                </div>
+
+                <div class="arrow">
+                    →
+                </div>
+
+                <div class="flow-item">
+                    git init
+                </div>
+
+                <div class="arrow">
+                    →
+                </div>
+
+                <div class="flow-item">
+                    Git
+                </div>
+
+            </div>
+
+
+            <div class="command-section">
+
+                <h3>
+                    1. Entrar al proyecto
+                </h3>
+
+
+                <div class="code-box">
+
+                    <button
+                        class="copy-btn"
+                        data-copy="cd mi-proyecto">
+
+                        Copiar
+
+                    </button>
+
+
+                    <pre><code>cd mi-proyecto</code></pre>
+
+                </div>
+
+            </div>
+
+
+            <div class="command-section">
+
+                <h3>
+                    2. Inicializar Git
+                </h3>
+
+
+                <div class="code-box">
+
+                    <button
+                        class="copy-btn"
+                        data-copy="git init">
+
+                        Copiar
+
+                    </button>
+
+
+                    <pre><code>git init</code></pre>
+
+                </div>
+
+
+                <p>
+
+                    Convierte la carpeta actual
+                    en un repositorio Git.
+
+                </p>
+
+            </div>
+
+
+            <div class="command-section">
+
+                <h3>
+                    3. Consultar estado
+                </h3>
+
+
+                <div class="code-box">
+
+                    <button
+                        class="copy-btn"
+                        data-copy="git status">
+
+                        Copiar
+
+                    </button>
+
+
+                    <pre><code>git status</code></pre>
+
+                </div>
+
+
+                <p>
+
+                    Muestra el estado actual del repositorio.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             ADD + COMMIT
+        ======================================================= -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <span>
+                    05
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        GUARDAR CAMBIOS
+                    </p>
+
+                    <h2>
+                        Add + Commit
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="important-command">
+
+                <div class="command-line">
+
+                    <code>
+                        git add .
+                    </code>
+
+                    <span>
+                        →
+                    </span>
+
+                    <code>
+                        git commit -m "cambio"
+                    </code>
+
+                </div>
+
+
+                <p>
+
+                    Primero seleccionamos los cambios
+                    y luego creamos un punto de control.
+
+                </p>
+
+            </div>
+
+
+            <article class="explain-card">
+
+                <h3>
+                    🔎 Analicemos:
+                </h3>
+
+
+                <pre><code>git commit -m "cambio"</code></pre>
+
+
+                <ul>
+
+                    <li>
+
+                        <code>git</code>
+                        →
+                        ejecuta Git.
+
+                    </li>
+
+
+                    <li>
+
+                        <code>commit</code>
+                        →
+                        crea un registro de los cambios.
+
+                    </li>
+
+
+                    <li>
+
+                        <code>-m</code>
+                        →
+                        permite escribir un mensaje.
+
+                    </li>
+
+
+                    <li>
+
+                        <code>"cambio"</code>
+                        →
+                        descripción del commit.
+
+                    </li>
+
+                </ul>
+
+            </article>
+
+
+            <div class="tip">
+
+                <strong>
+                    💡 Buena práctica
+                </strong>
+
+
+                <p>
+
+                    Los mensajes de commit deberían explicar
+                    qué cambio se realizó.
+
+                </p>
+
+
+                <div class="examples">
+
+                    <code>
+                        git commit -m "Agrega formulario de login"
+                    </code>
+
+                    <code>
+                        git commit -m "Corrige estilos del menú"
+                    </code>
+
+                    <code>
+                        git commit -m "Agrega validación del formulario"
+                    </code>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             HISTORIAL
+        ======================================================= -->
+
+        <section class="section gray-section">
+
+            <div class="section-title">
+
+                <span>
+                    06
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        HISTORIAL
+                    </p>
+
+                    <h2>
+                        Consultar cambios
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="command-grid">
+
+
+                <article class="command-card light">
+
+                    <code>
+                        git diff
+                    </code>
+
+                    <h3>
+                        Ver diferencias
+                    </h3>
+
+                    <p>
+
+                        Muestra las modificaciones
+                        que todavía no fueron confirmadas.
+
+                    </p>
+
+                </article>
+
+
+                <article class="command-card light">
+
+                    <code>
+                        git log
+                    </code>
+
+                    <h3>
+                        Ver historial
+                    </h3>
+
+                    <p>
+
+                        Muestra el historial completo
+                        de commits.
+
+                    </p>
+
+                </article>
+
+
+                <article class="command-card light">
+
+                    <code>
+                        git log --oneline
+                    </code>
+
+                    <h3>
+                        Historial resumido
+                    </h3>
+
+                    <p>
+
+                        Muestra cada commit
+                        en una sola línea.
+
+                    </p>
+
+                </article>
+
+
+                <article class="command-card light">
+
+                    <code>
+                        git show
+                    </code>
+
+                    <h3>
+                        Ver un commit
+                    </h3>
+
+                    <p>
+
+                        Permite consultar los detalles
+                        de un commit.
+
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             RAMAS
+        ======================================================= -->
+
+        <section id="ramas"
+                 class="section">
+
+            <div class="section-title">
+
+                <span>
+                    07
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        BRANCHES
+                    </p>
+
+                    <h2>
+                        Trabajar con ramas
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <p class="section-intro">
+
+                Las ramas permiten trabajar sobre distintas
+                líneas de desarrollo sin modificar directamente
+                la rama principal.
+
+            </p>
+
+
+            <div class="branch-diagram">
+
+                <div class="branch main">
+                    main
+                </div>
+
+
+                <div class="branch-line">
+                </div>
+
+
+                <div class="branch feature">
+                    feature-login
+                </div>
+
+            </div>
+
+
+            <div class="command-grid">
+
+
+                <article class="command-card light">
+
+                    <code>
+                        git branch
+                    </code>
+
+                    <h3>
+                        Ver ramas
+                    </h3>
+
+                    <p>
+                        Lista las ramas existentes.
+                    </p>
+
+                </article>
+
+
+                <article class="command-card light">
+
+                    <code>
+                        git branch nueva-rama
+                    </code>
+
+                    <h3>
+                        Crear rama
+                    </h3>
+
+                    <p>
+                        Crea una nueva rama.
+                    </p>
+
+                </article>
+
+
+                <article class="command-card light">
+
+                    <code>
+                        git switch nueva-rama
+                    </code>
+
+                    <h3>
+                        Cambiar de rama
+                    </h3>
+
+                    <p>
+                        Cambia a otra rama.
+                    </p>
+
+                </article>
+
+
+                <article class="command-card light">
+
+                    <code>
+                        git switch -c login
+                    </code>
+
+                    <h3>
+                        Crear y cambiar
+                    </h3>
+
+                    <p>
+                        Crea una rama y cambia inmediatamente a ella.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             MERGE
+        ======================================================= -->
+
+        <section class="section gray-section">
+
+            <div class="section-title">
+
+                <span>
+                    08
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        INTEGRACIÓN
+                    </p>
+
+                    <h2>
+                        Merge
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <p>
+
+                <code>
+                    merge
+                </code>
+
+                permite integrar los cambios
+                de una rama dentro de otra.
+
+            </p>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git switch main">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git switch main</code></pre>
+
+            </div>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git merge login">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git merge login</code></pre>
+
+            </div>
+
+
+            <div class="callout warning">
+
+                <strong>
+                    ⚠ Posible conflicto
+                </strong>
+
+
+                <p>
+
+                    Si dos ramas modificaron las mismas líneas,
+                    Git puede solicitar que resolvamos
+                    manualmente el conflicto.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             GITHUB
+        ======================================================= -->
+
+        <section id="github"
+                 class="section">
+
+            <div class="section-title">
+
+                <span>
+                    09
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        REPOSITORIOS REMOTOS
+                    </p>
+
+                    <h2>
+                        Git + GitHub
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="remote-flow">
+
+                <div>
+
+                    💻
+
+                    <strong>
+                        PC
+                    </strong>
+
+                    <small>
+                        Repositorio local
+                    </small>
+
+                </div>
+
+
+                <div class="remote-arrow">
+                    ↕
+                </div>
+
+
+                <div>
+
+                    ☁️
+
+                    <strong>
+                        GitHub
+                    </strong>
+
+                    <small>
+                        Repositorio remoto
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <h3>
+                Agregar repositorio remoto
+            </h3>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git remote add origin URL_DEL_REPOSITORIO">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git remote add origin URL_DEL_REPOSITORIO</code></pre>
+
+            </div>
+
+
+            <h3>
+                Ver repositorios remotos
+            </h3>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git remote -v">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git remote -v</code></pre>
+
+            </div>
+
+
+            <h3>
+                Subir cambios
+            </h3>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git push -u origin main">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git push -u origin main</code></pre>
+
+            </div>
+
+
+            <ul class="command-list">
+
+                <li>
+
+                    <code>
+                        push
+                    </code>
+
+                    →
+                    envía cambios al repositorio remoto.
+
+                </li>
+
+
+                <li>
+
+                    <code>
+                        -u
+                    </code>
+
+                    →
+                    establece la rama remota de seguimiento.
+
+                </li>
+
+
+                <li>
+
+                    <code>
+                        origin
+                    </code>
+
+                    →
+                    nombre habitual del repositorio remoto.
+
+                </li>
+
+
+                <li>
+
+                    <code>
+                        main
+                    </code>
+
+                    →
+                    rama que estamos enviando.
+
+                </li>
+
+            </ul>
+
+
+            <h3>
+                Descargar cambios
+            </h3>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git pull origin main">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git pull origin main</code></pre>
+
+            </div>
+
+
+            <h3>
+                Clonar un repositorio
+            </h3>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git clone URL_DEL_REPOSITORIO">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git clone URL_DEL_REPOSITORIO</code></pre>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             GITIGNORE
+        ======================================================= -->
+
+        <section class="section gray-section">
+
+            <div class="section-title">
+
+                <span>
+                    10
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        BUENAS PRÁCTICAS
+                    </p>
+
+                    <h2>
+                        El archivo .gitignore
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <p>
+
+                <code>
+                    .gitignore
+                </code>
+
+                permite indicar qué archivos
+                o carpetas Git debe ignorar.
+
+            </p>
+
+
+            <div class="gitignore-example">
+
+<pre><code># Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+
+# Archivos temporales
+*.tmp
+
+# Sistema operativo
+.DS_Store
+
+# Logs
+*.log</code></pre>
+
+            </div>
+
+
+            <div class="callout danger">
+
+                <strong>
+                    🔐 Importante
+                </strong>
+
+
+                <p>
+
+                    Nunca deberíamos subir contraseñas, tokens,
+                    claves privadas o archivos con información
+                    sensible al repositorio.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             DESHACER CAMBIOS
+        ======================================================= -->
+
+        <section class="section">
+
+            <div class="section-title">
+
+                <span>
+                    11
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        RECUPERACIÓN
+                    </p>
+
+                    <h2>
+                        Deshacer cambios
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="decision-table">
+
+
+                <div class="decision-row header-row">
+
+                    <div>
+                        Comando
+                    </div>
+
+                    <div>
+                        ¿Para qué sirve?
+                    </div>
+
+                </div>
+
+
+                <div class="decision-row">
+
+                    <div>
+
+                        <code>
+                            git restore archivo
+                        </code>
+
+                    </div>
+
+                    <div>
+
+                        Descarta cambios no confirmados
+                        de un archivo.
+
+                    </div>
+
+                </div>
+
+
+                <div class="decision-row">
+
+                    <div>
+
+                        <code>
+                            git restore --staged archivo
+                        </code>
+
+                    </div>
+
+                    <div>
+
+                        Quita un archivo del staging.
+
+                    </div>
+
+                </div>
+
+
+                <div class="decision-row">
+
+                    <div>
+
+                        <code>
+                            git revert ID
+                        </code>
+
+                    </div>
+
+                    <div>
+
+                        Crea un nuevo commit
+                        que revierte otro commit.
+
+                    </div>
+
+                </div>
+
+
+                <div class="decision-row">
+
+                    <div>
+
+                        <code>
+                            git reset --hard
+                        </code>
+
+                    </div>
+
+                    <div>
+
+                        Puede eliminar cambios locales.
+                        Usar con mucha precaución.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="callout danger">
+
+                <strong>
+                    ⚠ Atención
+                </strong>
+
+
+                <p>
+
+                    Los comandos como
+                    <code>git reset --hard</code>
+                    pueden provocar pérdida de cambios.
+
+                    No deben utilizarse sin entender primero
+                    qué información estamos eliminando.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             TAGS
+        ======================================================= -->
+
+        <section class="section gray-section">
+
+            <div class="section-title">
+
+                <span>
+                    12
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        VERSIONES
+                    </p>
+
+                    <h2>
+                        Tags
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <p>
+
+                Los tags permiten marcar versiones importantes
+                de un proyecto.
+
+            </p>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git tag v1.0.0">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git tag v1.0.0</code></pre>
+
+            </div>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git tag">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git tag</code></pre>
+
+            </div>
+
+
+            <div class="code-box">
+
+                <button
+                    class="copy-btn"
+                    data-copy="git push origin v1.0.0">
+
+                    Copiar
+
+                </button>
+
+
+                <pre><code>git push origin v1.0.0</code></pre>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             ERRORES
+        ======================================================= -->
+
+        <section id="errores"
+                 class="section">
+
+            <div class="section-title">
+
+                <span>
+                    13
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        PROBLEMAS FRECUENTES
+                    </p>
+
+                    <h2>
+                        Errores habituales
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="faq">
+
+
+                <details>
+
+                    <summary>
+                        ¿Qué hago si dice "not a git repository"?
+                    </summary>
+
+
+                    <p>
+
+                        Probablemente estás en una carpeta
+                        que todavía no fue inicializada
+                        como repositorio.
+
+                    </p>
+
+
+                    <pre><code>git init</code></pre>
+
+                </details>
+
+
+
+                <details>
+
+                    <summary>
+                        ¿Qué significa "nothing to commit"?
+                    </summary>
+
+
+                    <p>
+
+                        Significa que Git no detecta
+                        cambios nuevos para guardar.
+
+                    </p>
+
+                </details>
+
+
+
+                <details>
+
+                    <summary>
+                        ¿Por qué aparece "rejected" al hacer push?
+                    </summary>
+
+
+                    <p>
+
+                        Puede ocurrir porque el repositorio remoto
+                        contiene cambios que todavía no tenemos
+                        localmente.
+
+                    </p>
+
+
+                    <pre><code>git pull origin main</code></pre>
+
+                </details>
+
+
+
+                <details>
+
+                    <summary>
+                        ¿Cuál es la diferencia entre Git y GitHub?
+                    </summary>
+
+
+                    <p>
+
+                        Git es el sistema de control de versiones.
+                        GitHub es una plataforma que permite alojar
+                        repositorios Git y trabajar colaborativamente.
+
+                    </p>
+
+                </details>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             EJERCICIOS
+        ======================================================= -->
+
+        <section id="ejercicios"
+                 class="section gray-section">
+
+            <div class="section-title">
+
+                <span>
+                    14
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        PRÁCTICA
+                    </p>
+
+                    <h2>
+                        Ejercicios para alumnos
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="exercise-grid">
+
+
+                <!-- EJERCICIO 1 -->
+
+                <article class="exercise">
+
+                    <span>
+                        EJERCICIO 01
+                    </span>
+
+
+                    <h3>
+                        Primer repositorio
+                    </h3>
+
+
+                    <p>
+
+                        Crear una carpeta llamada
+                        <strong>mi-primer-git</strong>,
+                        inicializar Git y realizar un primer commit.
+
+                    </p>
+
+
+                    <ol>
+
+                        <li>
+                            Crear carpeta.
+                        </li>
+
+                        <li>
+                            Entrar con <code>cd</code>.
+                        </li>
+
+                        <li>
+                            Ejecutar <code>git init</code>.
+                        </li>
+
+                        <li>
+                            Crear <code>index.html</code>.
+                        </li>
+
+                        <li>
+                            Ejecutar <code>git status</code>.
+                        </li>
+
+                        <li>
+                            Ejecutar <code>git add .</code>.
+                        </li>
+
+                        <li>
+                            Ejecutar <code>git commit</code>.
+                        </li>
+
+                    </ol>
+
+                </article>
+
+
+
+                <!-- EJERCICIO 2 -->
+
+                <article class="exercise">
+
+                    <span>
+                        EJERCICIO 02
+                    </span>
+
+
+                    <h3>
+                        Trabajar con ramas
+                    </h3>
+
+
+                    <p>
+
+                        Crear una rama llamada
+                        <strong>
+                            feature-contacto
+                        </strong>
+
+                        y agregar una nueva página.
+
+                    </p>
+
+
+                    <pre><code>git switch -c feature-contacto
+
+git add .
+
+git commit -m "Agrega página contacto"</code></pre>
+
+                </article>
+
+
+
+                <!-- EJERCICIO 3 -->
+
+                <article class="exercise">
+
+                    <span>
+                        EJERCICIO 03
+                    </span>
+
+
+                    <h3>
+                        GitHub
+                    </h3>
+
+
+                    <p>
+
+                        Crear un repositorio en GitHub
+                        y vincularlo con el proyecto local.
+
+                    </p>
+
+
+                    <pre><code>git remote add origin URL
+
+git push -u origin main</code></pre>
+
+                </article>
+
+
+
+                <!-- EJERCICIO 4 -->
+
+                <article class="exercise">
+
+                    <span>
+                        EJERCICIO 04
+                    </span>
+
+
+                    <h3>
+                        Proyecto final
+                    </h3>
+
+
+                    <p>
+
+                        Crear un pequeño sitio web y trabajar
+                        utilizando Git durante todo el desarrollo.
+
+                    </p>
+
+
+                    <ul>
+
+                        <li>
+                            Mínimo 5 commits.
+                        </li>
+
+                        <li>
+                            Mínimo 2 ramas.
+                        </li>
+
+                        <li>
+                            Uso de .gitignore.
+                        </li>
+
+                        <li>
+                            Repositorio en GitHub.
+                        </li>
+
+                        <li>
+                            README.md.
+                        </li>
+
+                    </ul>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             CHEAT SHEET
+        ======================================================= -->
+
+        <section id="cheatsheet"
+                 class="section dark-section">
+
+            <div class="section-title">
+
+                <span>
+                    15
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        RESUMEN
+                    </p>
+
+                    <h2>
+                        Cheat Sheet
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="cheat-grid">
+
+
+                <div>
+
+                    <span>
+                        Configuración
+                    </span>
+
+
+                    <code>
+                        git --version
+                    </code>
+
+
+                    <code>
+                        git config --global user.name
+                    </code>
+
+
+                    <code>
+                        git config --global user.email
+                    </code>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        Repositorio
+                    </span>
+
+
+                    <code>
+                        git init
+                    </code>
+
+
+                    <code>
+                        git status
+                    </code>
+
+
+                    <code>
+                        git add .
+                    </code>
+
+
+                    <code>
+                        git commit -m "mensaje"
+                    </code>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        Historial
+                    </span>
+
+
+                    <code>
+                        git log
+                    </code>
+
+
+                    <code>
+                        git log --oneline
+                    </code>
+
+
+                    <code>
+                        git diff
+                    </code>
+
+
+                    <code>
+                        git show
+                    </code>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        Ramas
+                    </span>
+
+
+                    <code>
+                        git branch
+                    </code>
+
+
+                    <code>
+                        git switch rama
+                    </code>
+
+
+                    <code>
+                        git switch -c rama
+                    </code>
+
+
+                    <code>
+                        git merge rama
+                    </code>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        GitHub
+                    </span>
+
+
+                    <code>
+                        git remote -v
+                    </code>
+
+
+                    <code>
+                        git push
+                    </code>
+
+
+                    <code>
+                        git pull
+                    </code>
+
+
+                    <code>
+                        git clone URL
+                    </code>
+
+                </div>
+
+
+
+                <div>
+
+                    <span>
+                        Recuperación
+                    </span>
+
+
+                    <code>
+                        git restore archivo
+                    </code>
+
+
+                    <code>
+                        git restore --staged archivo
+                    </code>
+
+
+                    <code>
+                        git revert ID
+                    </code>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================================
+             FLUJO FINAL
+        ======================================================= -->
+
+        <section class="final-section">
+
+            <div class="final-content">
+
+                <span class="badge">
+                    FLUJO FUNDAMENTAL
+                </span>
+
+
+                <h2>
+                    El ciclo que tenés que recordar
+                </h2>
+
+
+                <div class="final-flow">
+
+                    <span>
+                        ✏️ Modificar
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                    <span>
+                        🔎 status
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                    <span>
+                        📦 add
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                    <span>
+                        💾 commit
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                    <span>
+                        ☁️ push
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ==========================================================
+         TOAST
+    ========================================================== -->
+
+    <div id="toast" class="toast">
+        Comando copiado
+    </div>
+
+
+
+    <!-- ==========================================================
+         BOTÓN VOLVER ARRIBA
+    ========================================================== -->
+
+    <button id="topBtn" class="top-btn">
+        ↑
+    </button>
+
+
+
+    <!-- ==========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer class="footer">
+
+        <p>
+            Git + Bash · Aplicaciones Web 1 y 2
+        </p>
+
+        <p>
+            hechio con ❤️. Material educativo para prácticas de desarrollo web.
+        </p>
+
+    </footer>
+
+
+
+    <!-- ==========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+
+        /*
+        =============================================================
+            GUÍA GIT + BASH
+            JavaScript embebido en el mismo HTML
+
+            Funcionalidades:
+
+            1. Menú responsive
+            2. Cambio de tema
+            3. localStorage
+            4. Copiar comandos
+            5. Toast
+            6. Barra de progreso
+            7. Volver arriba
+            8. Animaciones al hacer scroll
+            9. Detección de comandos peligrosos
+        =============================================================
+        */
+
+
+        // ========================================================
+        // ESPERAR A QUE EL HTML ESTÉ CARGADO
+        // ========================================================
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+
+            // ====================================================
+            // 1. MENÚ RESPONSIVE
+            // ====================================================
+
+            const menuBtn =
+                document.getElementById("menuBtn");
+
+
+            const navLinks =
+                document.getElementById("navLinks");
+
+
+            /*
+                Cuando hacemos click en el botón:
+
+                classList.toggle()
+
+                agrega "open" si no existe
+                y la elimina si ya existe.
+            */
+
+            menuBtn.addEventListener("click", () => {
+
+                navLinks.classList.toggle("open");
+
+            });
+
+
+            /*
+                Cerramos el menú cuando
+                seleccionamos una opción.
+            */
+
+            navLinks
+                .querySelectorAll("a")
+                .forEach((link) => {
+
+                    link.addEventListener("click", () => {
+
+                        navLinks.classList.remove("open");
+
+                    });
+
+                });
+
+
+
+            // ====================================================
+            // 2. CAMBIO DE TEMA
+            // ====================================================
+
+            const themeBtn =
+                document.getElementById("themeBtn");
+
+
+            themeBtn.addEventListener("click", () => {
+
+
+                /*
+                    Consultamos el atributo:
+
+                    data-theme="dark"
+
+                    del elemento HTML.
+                */
+
+                const temaActual =
+                    document.documentElement
+                        .getAttribute("data-theme");
+
+
+                let nuevoTema;
+
+
+                if (temaActual === "dark") {
+
+                    nuevoTema = "light";
+
+                }
+
+                else {
+
+                    nuevoTema = "dark";
+
+                }
+
+
+                /*
+                    TEMA OSCURO
+                */
+
+                if (nuevoTema === "dark") {
+
+                    document.documentElement
+                        .setAttribute(
+                            "data-theme",
+                            "dark"
+                        );
+
+
+                    /*
+                        Guardamos la preferencia
+                        utilizando localStorage.
+                    */
+
+                    localStorage.setItem(
+                        "temaGit",
+                        "dark"
+                    );
+
+
+                    themeBtn.textContent =
+                        "☀ Cambiar tema";
+
+                }
+
+
+                /*
+                    TEMA CLARO
+                */
+
+                else {
+
+                    document.documentElement
+                        .removeAttribute(
+                            "data-theme"
+                        );
+
+
+                    localStorage.setItem(
+                        "temaGit",
+                        "light"
+                    );
+
+
+                    themeBtn.textContent =
+                        "◐ Cambiar tema";
+
+                }
+
+            });
+
+
+
+            // ====================================================
+            // 3. RECUPERAR TEMA GUARDADO
+            // ====================================================
+
+            /*
+                Si el alumno ya había seleccionado
+                el tema oscuro anteriormente,
+                lo recuperamos.
+            */
+
+            const temaGuardado =
+                localStorage.getItem("temaGit");
+
+
+            if (temaGuardado === "dark") {
+
+                document.documentElement
+                    .setAttribute(
+                        "data-theme",
+                        "dark"
+                    );
+
+
+                themeBtn.textContent =
+                    "☀ Cambiar tema";
+
+            }
+
+
+
+            // ====================================================
+            // 4. BOTONES COPIAR
+            // ====================================================
+
+            /*
+                Buscamos todos los botones
+                que tengan la clase copy-btn.
+            */
+
+            const copyButtons =
+                document.querySelectorAll(
+                    ".copy-btn"
+                );
+
+
+            /*
+                Buscamos el elemento
+                que muestra el mensaje.
+            */
+
+            const toast =
+                document.getElementById(
+                    "toast"
+                );
+
+
+            /*
+                Recorremos todos los botones.
+            */
+
+            copyButtons.forEach((button) => {
+
+
+                /*
+                    Evento click.
+                */
+
+                button.addEventListener(
+                    "click",
+                    async () => {
+
+
+                        /*
+                            Recuperamos el valor
+                            del atributo:
+
+                            data-copy="git status"
+
+                            mediante:
+
+                            button.dataset.copy
+                        */
+
+                        const comando =
+                            button.dataset.copy;
+
+
+                        /*
+                            Intentamos copiar
+                            usando Clipboard API.
+                        */
+
+                        try {
+
+                            await navigator.clipboard
+                                .writeText(
+                                    comando
+                                );
+
+
+                            /*
+                                Guardamos
+                                el texto original.
+                            */
+
+                            const textoOriginal =
+                                button.textContent;
+
+
+                            /*
+                                Modificamos
+                                temporalmente
+                                el botón.
+                            */
+
+                            button.textContent =
+                                "✓ Copiado";
+
+
+                            /*
+                                Mostramos
+                                el mensaje.
+                            */
+
+                            toast.textContent =
+                                `✓ ${comando} copiado`;
+
+
+                            toast.classList.add(
+                                "show"
+                            );
+
+
+                            /*
+                                Después de 1.8 segundos
+                                restauramos todo.
+                            */
+
+                            setTimeout(() => {
+
+                                button.textContent =
+                                    textoOriginal;
+
+                                toast.classList.remove(
+                                    "show"
+                                );
+
+                            }, 1800);
+
+                        }
+
+
+                        /*
+                            Método alternativo
+                            si Clipboard API falla.
+                        */
+
+                        catch (error) {
+
+                            const textarea =
+                                document.createElement(
+                                    "textarea"
+                                );
+
+
+                            textarea.value =
+                                comando;
+
+
+                            document.body
+                                .appendChild(
+                                    textarea
+                                );
+
+
+                            textarea.select();
+
+
+                            document.execCommand(
+                                "copy"
+                            );
+
+
+                            textarea.remove();
+
+
+                            toast.textContent =
+                                "✓ Comando copiado";
+
+
+                            toast.classList.add(
+                                "show"
+                            );
+
+
+                            setTimeout(() => {
+
+                                toast.classList.remove(
+                                    "show"
+                                );
+
+                            }, 1800);
+
+                        }
+
+                    }
+                );
+
+            });
+
+
+
+            // ====================================================
+            // 5. BARRA DE PROGRESO
+            // ====================================================
+
+            const progressBar =
+                document.getElementById(
+                    "progressBar"
+                );
+
+
+            window.addEventListener(
+                "scroll",
+                () => {
+
+
+                    /*
+                        scrollY indica cuánto
+                        desplazamos la página.
+                    */
+
+                    const scrollTop =
+                        window.scrollY;
+
+
+                    /*
+                        Altura total disponible
+                        para desplazamiento.
+                    */
+
+                    const pageHeight =
+                        document.documentElement
+                            .scrollHeight -
+                        window.innerHeight;
+
+
+                    /*
+                        Convertimos a porcentaje.
+                    */
+
+                    const porcentaje =
+                        pageHeight > 0
+                            ? (
+                                scrollTop /
+                                pageHeight
+                            ) * 100
+                            : 0;
+
+
+                    /*
+                        Modificamos el ancho
+                        de la barra.
+                    */
+
+                    progressBar.style.width =
+                        `${porcentaje}%`;
+
+                }
+            );
+
+
+
+            // ====================================================
+            // 6. BOTÓN VOLVER ARRIBA
+            // ====================================================
+
+            const topBtn =
+                document.getElementById(
+                    "topBtn"
+                );
+
+
+            /*
+                Cuando bajamos más de 500px,
+                aparece el botón.
+            */
+
+            window.addEventListener(
+                "scroll",
+                () => {
+
+                    if (window.scrollY > 500) {
+
+                        topBtn.classList.add(
+                            "visible"
+                        );
+
+                    }
+
+                    else {
+
+                        topBtn.classList.remove(
+                            "visible"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /*
+                Volver al comienzo
+                mediante scroll suave.
+            */
+
+            topBtn.addEventListener(
+                "click",
+                () => {
+
+                    window.scrollTo({
+
+                        top: 0,
+
+                        behavior: "smooth"
+
+                    });
+
+                }
+            );
+
+
+
+            // ====================================================
+            // 7. ANIMACIONES AL HACER SCROLL
+            // ====================================================
+
+            /*
+                Seleccionamos los elementos
+                que queremos animar.
+            */
+
+            const elements =
+                document.querySelectorAll(
+                    `
+                    .info-card,
+                    .command-card,
+                    .step,
+                    .exercise,
+                    .callout,
+                    .command-section,
+                    .decision-table,
+                    details
+                    `
+                );
+
+
+            /*
+                Agregamos la clase reveal.
+
+                El CSS inicialmente
+                deja esos elementos invisibles.
+            */
+
+            elements.forEach((element) => {
+
+                element.classList.add(
+                    "reveal"
+                );
+
+            });
+
+
+            /*
+                IntersectionObserver
+                detecta cuándo los elementos
+                aparecen en pantalla.
+            */
+
+            const observer =
+                new IntersectionObserver(
+                    (entries, observer) => {
+
+
+                        entries.forEach(
+                            (entry) => {
+
+
+                                /*
+                                    Si el elemento
+                                    está visible...
+                                */
+
+                                if (
+                                    entry.isIntersecting
+                                ) {
+
+
+                                    /*
+                                        Agregamos
+                                        la clase active.
+
+                                        CSS:
+
+                                        .reveal.active
+                                    */
+
+                                    entry.target
+                                        .classList
+                                        .add(
+                                            "active"
+                                        );
+
+
+                                    /*
+                                        Dejamos de observar
+                                        el elemento.
+
+                                        Así la animación
+                                        no se repite.
+                                    */
+
+                                    observer
+                                        .unobserve(
+                                            entry.target
+                                        );
+
+                                }
+
+                            }
+                        );
+
+                    },
+
+                    {
+                        threshold: 0.08
+                    }
+
+                );
+
+
+            /*
+                Comenzamos a observar
+                cada elemento.
+            */
+
+            elements.forEach((element) => {
+
+                observer.observe(
+                    element
+                );
+
+            });
+
+
+
+            // ====================================================
+            // 8. DETECTAR COMANDOS PELIGROSOS
+            // ====================================================
+
+            /*
+                Lista de comandos
+                que pueden ser destructivos.
+            */
+
+            const dangerousCommands = [
+
+                "rm -rf",
+
+                "git reset --hard",
+
+                "git clean -fd"
+
+            ];
+
+
+            /*
+                Buscamos todos los elementos <code>.
+            */
+
+            document
+                .querySelectorAll("code")
+                .forEach((code) => {
+
+
+                    /*
+                        Obtenemos el texto.
+                    */
+
+                    const texto =
+                        code.textContent.trim();
+
+
+                    /*
+                        some() devuelve true
+                        si encuentra alguno.
+                    */
+
+                    const esPeligroso =
+                        dangerousCommands.some(
+                            (comando) => {
+
+                                return texto
+                                    .includes(
+                                        comando
+                                    );
+
+                            }
+                        );
+
+
+                    /*
+                        Si es peligroso,
+                        agregamos un tooltip.
+                    */
+
+                    if (esPeligroso) {
+
+                        code.title =
+                            "⚠ Comando potencialmente destructivo";
+
+                    }
+
+                });
+
+
+
+            // ====================================================
+            // FIN
+            // ====================================================
+
+        });
+
+    </script>
+
+</body>
+
+</html>
